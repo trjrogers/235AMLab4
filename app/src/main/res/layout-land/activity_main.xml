@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/player1Label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="Player 1"
+        app:layout_constraintBaseline_toBaselineOf="@+id/player1ScoreTV"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/player2Label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player 2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/player1Label"
+        app:layout_constraintTop_toBottomOf="@+id/player1Label"
+        app:layout_constraintVertical_bias="0.774" />
+
+    <TextView
+        android:id="@+id/player1ScoreTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:width="100sp"
+        android:background="#DDDDDD"
+        android:text="0"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/player2EditText"
+        app:layout_constraintStart_toEndOf="@+id/player1Label"
+        app:layout_constraintTop_toBottomOf="@+id/player1EditText" />
+
+    <TextView
+        android:id="@+id/player2ScoreTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="100sp"
+        android:background="#DDDDDD"
+        android:text="0"
+        android:textAlignment="center"
+        app:layout_constraintBaseline_toBaselineOf="@+id/player2Label"
+        app:layout_constraintStart_toStartOf="@+id/player1ScoreTV" />
+
+    <TextView
+        android:id="@+id/turnLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="484dp"
+        android:text="@string/player_1_turn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/player1EditText" />
+
+    <TextView
+        android:id="@+id/pointsThisTurnLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Points for this turn"
+        app:layout_constraintBottom_toTopOf="@+id/pointsThisTurnTV"
+        app:layout_constraintEnd_toEndOf="@+id/turnLabel"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/turnLabel"
+        app:layout_constraintTop_toBottomOf="@+id/dieImage" />
+
+    <TextView
+        android:id="@+id/pointsThisTurnTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="100sp"
+        android:background="#DDDDDD"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/endTurnButton"
+        app:layout_constraintEnd_toEndOf="@+id/endTurnButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/endTurnButton"
+        app:layout_constraintTop_toBottomOf="@+id/pointsThisTurnLabel" />
+
+    <Button
+        android:id="@+id/rollButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="356dp"
+        android:text="Roll Die"
+        app:layout_constraintBaseline_toBaselineOf="@+id/endTurnButton"
+        app:layout_constraintEnd_toStartOf="@+id/endTurnButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player2ScoreTV"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/endTurnButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Turn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/newGameButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rollButton"
+        app:layout_constraintTop_toBottomOf="@+id/pointsThisTurnTV" />
+
+    <Button
+        android:id="@+id/newGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:text="New Game"
+        app:layout_constraintBaseline_toBaselineOf="@+id/endTurnButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/endTurnButton" />
+
+    <ImageView
+        android:id="@+id/dieImage"
+        android:layout_width="109dp"
+        android:layout_height="91dp"
+        app:layout_constraintBottom_toTopOf="@+id/pointsThisTurnLabel"
+        app:layout_constraintEnd_toEndOf="@+id/pointsThisTurnLabel"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/pointsThisTurnLabel"
+        app:layout_constraintTop_toBottomOf="@+id/turnLabel"
+        app:srcCompat="@drawable/die1" />
+
+    <EditText
+        android:id="@+id/player1EditText"
+        android:layout_width="149dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="56dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Human"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/player1Label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.33" />
+
+    <EditText
+        android:id="@+id/player2EditText"
+        android:layout_width="149dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="112dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Computer"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/player1EditText" />
+</androidx.constraintlayout.widget.ConstraintLayout>
