@@ -3,6 +3,7 @@ package com.murach.piggame;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -30,24 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private Button endTurnButton;
     private Button newGameButton;
 
+    private int dieNumber;
     private int pointsThisTurn;
     private boolean endGame = false;
 
     private Pig pig;
 
     private SharedPreferences savedValues;
-    boolean stateRecovered = false;
-    boolean stateSaved = false;
 
-    // need to save: player1Username, player1Score, player2Username, player2Score, currentTurnPoints, whoseTurn, game over?, die image
-    private String PLAYER1_USERNAME;
-    private Integer PLAYER1_SCORE;
-    private String PLAYER2_USERNAME;
-    private Integer PLAYER2_SCORE;
-    private Integer CURRENT_TURN_POINTS;
-    private Integer WHOSE_TURN;
-    private boolean GAME_OVER;
-    private String CURRENT_DIE_IMAGE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
-
         DisableEndTurnButton();
         DisableRollButton();
+
+        savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
     }
 
     private void Roll() {
@@ -138,26 +129,32 @@ public class MainActivity extends AppCompatActivity {
         switch(rolled){
             case 1: {
                 ref = R.drawable.die1;
+                dieNumber = 1;
                 break;
             }
             case 2: {
                 ref = R.drawable.die2;
+                dieNumber = 2;
                 break;
             }
             case 3: {
                 ref = R.drawable.die3;
+                dieNumber = 3;
                 break;
             }
             case 4: {
                 ref = R.drawable.die4;
+                dieNumber = 4;
                 break;
             }
             case 5: {
                 ref = R.drawable.die5;
+                dieNumber = 5;
                 break;
             }
             case 6: {
                 ref = R.drawable.die6;
+                dieNumber = 6;
                 break;
             }default: {
                 ref = -1;
@@ -215,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         player2ScoreTV.setText("0");
         pointsThisTurnTV.setText("0");
         pointsThisTurn = 0;
+        dieNumber = -1;
 
         String p1 = String.valueOf(player1EditText);
         String p2 = String.valueOf(player2EditText);
@@ -247,56 +245,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public void onPause() {
-//        Editor editor = savedValues.edit();
-//        PLAYER1_USERNAME = String.valueOf(player1Label.getText());
-//        PLAYER1_SCORE = pig.player1.score;
-//        PLAYER2_USERNAME = String.valueOf(player2Label.getText());
-//        PLAYER2_SCORE = pig.player2.score;
-//        CURRENT_TURN_POINTS = pointsThisTurn;
-//        WHOSE_TURN = pig.whoseTurn;
-//        GAME_OVER = endGame;
-//        CURRENT_DIE_IMAGE = dieImage.toString();
-//
-//        editor.putString("PLAYER1_USERNAME", PLAYER1_USERNAME);
-//        editor.putInt("PLAYER1_SCORE", PLAYER1_SCORE);
-//        editor.putString("PLAYER2_USERNAME", PLAYER2_USERNAME);
-//        editor.putInt("PLAYER2_SCORE", PLAYER2_SCORE);
-//        editor.putInt("CURRENT_TURN_POINTS", CURRENT_TURN_POINTS);
-//        editor.putInt("WHOSE_TURN", WHOSE_TURN);
-//        editor.putBoolean("GAME_OVER", GAME_OVER);
-//        editor.putString("CURRENT_DIE_IMAGE", CURRENT_DIE_IMAGE);
-//        editor.commit();
-//        super.onPause();
-//    }
+    @Override
+    public void onPause() {
+        // Save instance variables
+        Editor editor = savedValues.edit();
+        editor.putString("player1Label", String.valueOf(player1Label.getText()));
+        editor.putInt("player1Score", pig.player1.score);
+        editor.putString("player2Label", String.valueOf(player2Label.getText()));
+        editor.putInt("player2Score", pig.player2.score);
+        editor.putInt("currentTurnPoints", pointsThisTurn);
+        editor.putInt("whoseTurn", pig.whoseTurn);
+        editor.putBoolean("gameOver", endGame);
+        editor.putInt("dieNumber", dieNumber);
+        editor.commit();
+        super.onPause();
+    }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Pig pig = new Pig(savedValues.getString("PLAYER1_USERNAME", "Human"), savedValues.getString("PLAYER2_USERNAME", "Computer"), 6);
-////        player1Label.setText(savedValues.getString("PLAYER1_USERNAME", "Human"));
-//        player1ScoreTV.setText(String.valueOf(savedValues.getInt("PLAYER1_SCORE", 0)));
-////        player2Label.setText(savedValues.getString("PLAYER2_USERNAME", "Computer"));
-//        player2ScoreTV.setText(String.valueOf(savedValues.getInt("PLAYER2_SCORE", 0)));
-//        pointsThisTurnTV.setText(String.valueOf(savedValues.getInt("CURRENT_TURN_POINTS", 0)));
-//        pointsThisTurn = savedValues.getInt("CURRENT_TURN_POINTS", 0);
-//        pig.whoseTurn = savedValues.getInt("WHOSE_TURN", 1);
-//        endGame = savedValues.getBoolean("GAME_OVER", false);
-//
-//        String image = savedValues.getString("CURRENT_DIE_IMAGE", "die1");
-//        String sub = image.substring(3);
-//        int ref = Integer.parseInt(sub);
-//        UpdateImage(ref);
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Pig pig = new Pig("Human", "Computer", 6);
+
+        player1Label.setText(savedValues.getString("player1Label", ""));
+        pig.player1.score = savedValues.getInt("player1Score", 0);
+        player2Label.setText(savedValues.getString("player2Label", ""));
+        pig.player2.score = savedValues.getInt("player2Score", 0);
+        pointsThisTurn = savedValues.getInt("currentTurnPoints", 0);
+        pig.whoseTurn = savedValues.getInt("whoseTurn", 1);
+        endGame = savedValues.getBoolean("gameOver", false);
+        UpdateImage(savedValues.getInt("dieNumber", 1));
+    }
 }
-
-//     private String PLAYER1_USERNAME;
-//    private Integer PLAYER1_SCORE;
-//    private String PLAYER2_USERNAME;
-//    private Integer PLAYER2_SCORE;
-//    private Integer CURRENT_TURN_POINTS;
-//    private Integer WHOSE_TURN;
-//    private boolean GAME_OVER;
-//    private String CURRENT_DIE_IMAGE;
-

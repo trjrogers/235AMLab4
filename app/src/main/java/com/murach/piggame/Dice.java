@@ -8,7 +8,6 @@ public class Dice {
     }
 
     public int Roll() {
-//        return numberGenerator(1, this.maxSides);
         return (int)(Math.random() * (maxSides) + 1);
     }
 }
