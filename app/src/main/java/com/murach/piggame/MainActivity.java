@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private int dieNumber;
     private int pointsThisTurn;
     private boolean endGame = false;
+    private boolean player1Turn = true;
 
     private Pig pig;
 
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
         DisableEndTurnButton();
         DisableRollButton();
+
+        Pig pig = new Pig("Human", "Computer", 6);
 
         savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
     }
@@ -168,8 +171,10 @@ public class MainActivity extends AppCompatActivity {
     private void SwitchTurns() {
         if (pig.whoseTurn == 1) {
             turnLabel.setText(player2Label.getText() + "'s turn");
+            player1Turn = false;
         } else {
             turnLabel.setText(player1Label.getText() + "'s turn");
+            player1Turn = true;
         }
         this.pig.SetTurn();
         pointsThisTurn = 0;
@@ -231,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
 
         pig = new Pig(p1, p2, 6);
         pig.whoseTurn = 1;
+
+        turnLabel.setText(String.valueOf(player1EditText.getText()) + "'s turn");
         EnableRollButton();
         EnableEndTurnButton();
     }
@@ -250,13 +257,14 @@ public class MainActivity extends AppCompatActivity {
         // Save instance variables
         Editor editor = savedValues.edit();
         editor.putString("player1Label", String.valueOf(player1Label.getText()));
-        editor.putInt("player1Score", pig.player1.score);
+        editor.putInt("player1Score", Integer.valueOf(String.valueOf(player1ScoreTV.getText())));
         editor.putString("player2Label", String.valueOf(player2Label.getText()));
-        editor.putInt("player2Score", pig.player2.score);
+        editor.putInt("player2Score", Integer.valueOf(String.valueOf(player2ScoreTV.getText())));
         editor.putInt("currentTurnPoints", pointsThisTurn);
-        editor.putInt("whoseTurn", pig.whoseTurn);
+        editor.putBoolean("whoseTurn", player1Turn);
         editor.putBoolean("gameOver", endGame);
         editor.putInt("dieNumber", dieNumber);
+        editor.putString("turnLabel", String.valueOf(turnLabel.getText()));
         editor.commit();
         super.onPause();
     }
@@ -268,11 +276,22 @@ public class MainActivity extends AppCompatActivity {
         Pig pig = new Pig("Human", "Computer", 6);
 
         player1Label.setText(savedValues.getString("player1Label", ""));
+        pig.player1.name = String.valueOf(player1Label.getText());
         pig.player1.score = savedValues.getInt("player1Score", 0);
+        player1ScoreTV.setText(pig.player1.score.toString());
         player2Label.setText(savedValues.getString("player2Label", ""));
+        pig.player2.name = String.valueOf(player2Label.getText());
         pig.player2.score = savedValues.getInt("player2Score", 0);
+        player2ScoreTV.setText(pig.player2.score.toString());
         pointsThisTurn = savedValues.getInt("currentTurnPoints", 0);
-        pig.whoseTurn = savedValues.getInt("whoseTurn", 1);
+        pointsThisTurnTV.setText(String.valueOf(pointsThisTurn));
+        player1Turn = savedValues.getBoolean("whoseTurn", true);
+        turnLabel.setText(savedValues.getString("turnLabel", pig.player1.name + "\'s turn"));
+        if (player1Turn) {
+            pig.whoseTurn = 1;
+        } else {
+            pig.whoseTurn = 2;
+        }
         endGame = savedValues.getBoolean("gameOver", false);
         UpdateImage(savedValues.getInt("dieNumber", 1));
     }
