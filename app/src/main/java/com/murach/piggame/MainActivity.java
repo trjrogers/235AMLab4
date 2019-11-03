@@ -2,10 +2,14 @@ package com.murach.piggame;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private Pig pig;
 
     private SharedPreferences savedValues;
-
+    private SharedPreferences prefs;
+    private boolean ai = false;
+    private int maxTurnPoints;
+    private int maxRolls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+
         DisableEndTurnButton();
         DisableRollButton();
 
@@ -88,21 +99,74 @@ public class MainActivity extends AppCompatActivity {
         savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_pig_game, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                return true;
+            case R.id.menu_about:
+                Toast.makeText(this, "About", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void Roll() {
         // disable rollButton
         // roll die
         // update image
         // update running score for this turn
-        DisableRollButton();
-        int result = this.pig.RollAndCalculate();
-        UpdateImage(result);
 
-        if (result != 1) {
-            UpdatePoints(result);
-            EnableRollButton();
+        // if ai is enabled and player 2 turn
+        //// get ai max turn points
+        //// roll until either a 1 is rolled or their turn points are >= max turn points setting
+
+        ai = prefs.getBoolean("pref_ai", false);
+
+        if (ai && pig.whoseTurn == 2) {
+            maxTurnPoints = Integer.parseInt(prefs.getString("pref_max_score", "100"));
+            maxRolls = Integer.parseInt(prefs.getString("pref_roll_number", "1"));
+            int lastRolled = 0;
+            int timesRolled = 0;
+            while ((pointsThisTurn <= maxTurnPoints) && (lastRolled != 1) && timesRolled < maxRolls){
+                DisableRollButton();
+                int result = this.pig.RollAndCalculate();
+                lastRolled = result;
+                UpdateImage(result);
+                timesRolled++;
+
+                Toast.makeText(getApplicationContext(), "Rolled " + result, Toast.LENGTH_SHORT);
+
+                if (result != 1) {
+                    UpdatePoints(result);
+                    EnableRollButton();
+                } else {
+                    pointsThisTurn = 0;
+                    pointsThisTurnTV.setText(String.valueOf(pointsThisTurn));
+                }
+            }
+            DisableRollButton();
         } else {
-            pointsThisTurn = 0;
-            pointsThisTurnTV.setText(String.valueOf(pointsThisTurn));
+            DisableRollButton();
+            int result = this.pig.RollAndCalculate();
+            UpdateImage(result);
+            Toast.makeText(getApplicationContext(), "Rolled " + result, Toast.LENGTH_SHORT);
+
+            if (result != 1) {
+                UpdatePoints(result);
+                EnableRollButton();
+            } else {
+                pointsThisTurn = 0;
+                pointsThisTurnTV.setText(String.valueOf(pointsThisTurn));
+            }
         }
     }
 
@@ -164,8 +228,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        Drawable drawable = getResources().getDrawable(ref);
-        this.dieImage.setImageDrawable(drawable);
+        try {
+            Drawable drawable = getResources().getDrawable(ref);
+            this.dieImage.setImageDrawable(drawable);
+        } catch (Exception e) {
+            ref = R.drawable.die1;
+            Drawable drawable = getResources().getDrawable(ref);
+            this.dieImage.setImageDrawable(drawable);
+        }
     }
 
     private void SwitchTurns() {
@@ -233,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             player2Label.setText("Player 2");
         }
-
+        endGame = false;
         pig = new Pig(p1, p2, 6);
         pig.whoseTurn = 1;
 
@@ -294,5 +364,8 @@ public class MainActivity extends AppCompatActivity {
         }
         endGame = savedValues.getBoolean("gameOver", false);
         UpdateImage(savedValues.getInt("dieNumber", 1));
+
+        ai = prefs.getBoolean("pref_ai", false);
+        maxTurnPoints = Integer.parseInt(prefs.getString("pref_max_score", "100"));
     }
 }

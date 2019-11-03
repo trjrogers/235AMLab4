@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="pref_ai"
+        android:title="Enable AI"
+        android:summary="Enables AI so the player can play against a computer enemy."
+        android:defaultValue="false" />
+    <ListPreference
+        android:key="pref_roll_number"
+        android:title="Dice to Roll"
+        android:summary="Sets the number of times the AI will roll per turn"
+        android:dialogTitle="Number of dice?"
+        android:entries="@array/num_dice_keys"
+        android:entryValues="@array/num_dice_values"
+        android:defaultValue="0" />
+    <ListPreference
+        android:key="pref_max_score"
+        android:title="AI Max Turn Score"
+        android:summary="Sets the maximum score the AI can reach before ending its turn"
+        android:dialogTitle="Max Turn Score?"
+        android:entries="@array/max_turn_score_keys"
+        android:entryValues="@array/max_turn_score_values"
+        android:defaultValue="100" />
+</PreferenceScreen>
